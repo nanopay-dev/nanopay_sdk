@@ -1,0 +1,23 @@
+{
+  "name": "nanopay-sdk",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.13.12",
+    "esbuild-plugin-globals": "^0.1.1"
+  },
+  "dependencies": {
+    "browser-or-node": "^2.0.0",
+    "eventemitter3": "^4.0.7",
+    "ky": "^0.28.7",
+    "ky-universal": "^0.9.1",
+    "ts-deepmerge": "^2.0.0"
+  },
+  "peerDependencies": {
+    "bsv": "^2.0.10"
+  }
+}
