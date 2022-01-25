@@ -11,6 +11,7 @@
 !.yarn/versions
 
 dist
+docs
 demo.html
 node_modules
 build

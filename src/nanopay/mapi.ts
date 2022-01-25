@@ -1,5 +1,10 @@
-import { BaseClient, HTTPHeaders } from './base'
+import { NanopaySDK } from '../index'
+import { getEnv } from './config'
+import { BaseClient, HTTPHeaders } from './api/base'
 
+/**
+ * TODO
+ */
 export interface GetTxPayload {
   apiVersion: string;
   blockHash?: string;
@@ -13,6 +18,9 @@ export interface GetTxPayload {
   txSecondMempoolExpiry: number;
 }
 
+/**
+ * TODO
+ */
 export interface PushTxPayload {
   apiVersion: string;
   currentHighestBlockHash: string;
@@ -20,14 +28,15 @@ export interface PushTxPayload {
   minerId: string;
   timestamp: string;
   txSecondMempoolExpiry: number;
-
   resultDescription?: string;
   returnResult?: string;
   txid?: string;
-
-  txs?: PushTxsItem[]
+  txs?: PushTxsItem[];
 }
 
+/**
+ * TODO
+ */
 export interface PushTxsItem {
   conflictedWith?: {
     hex: string;
@@ -39,11 +48,17 @@ export interface PushTxsItem {
   txid: string;
 }
 
+/**
+ * TODO
+ */
 export interface FeeQuotes {
   mine: FeeQuote;
   relay: FeeQuote;
 }
 
+/**
+ * TODO
+ */
 export interface FeeQuote {
   data: number;
   standard: number;
@@ -60,18 +75,42 @@ export const defaultFees: FeeQuotes = {
   }
 }
 
+/**
+ * TODO
+ */
 export class MapiClient {
   private _api: BaseClient;
 
+  /**
+   * TODO
+   * 
+   * @param baseUrl 
+   * @param headers 
+   */
   constructor(baseUrl: string, headers?: HTTPHeaders) {
-    this.setApi(baseUrl)
+    this._api = new BaseClient(baseUrl, {
+      'content-type': 'application/json; charset=utf-8',
+      ...headers,
+    })
   }
-
+  
+  /**
+   * TODO
+   * 
+   * @param txid 
+   * @returns 
+   */
   async getTx(txid: string): Promise<GetTxPayload> {
     const data = await this._api.get(`tx/${txid}`)
     return JSON.parse(data.payload)
   }
 
+  /**
+   * TODO
+   * 
+   * @param rawtx 
+   * @returns 
+   */
   async pushTx(rawtx: string | string[]): Promise<PushTxPayload> {
     let data;
     if (Array.isArray(rawtx)) {
@@ -82,7 +121,24 @@ export class MapiClient {
     return JSON.parse(data.payload)
   }
 
+  /**
+   * TODO
+   * 
+   * @param baseUrl 
+   * @param headers 
+   */
   setApi(baseUrl: string, headers?: HTTPHeaders): void {
     this._api = new BaseClient(baseUrl, headers)
   }
+}
+
+/**
+ * TODO
+ * 
+ * @param sdk 
+ * @returns 
+ */
+export function createMapiClient(sdk: NanopaySDK): MapiClient {
+  const { baseUrl, headers } = getEnv(sdk.opts, 'mapi')
+  return new MapiClient(baseUrl, headers)
 }

@@ -1,20 +1,23 @@
+import { isBrowser } from 'browser-or-node'
 import EventEmitter from 'eventemitter3'
 import { NanopaySDK } from '../index'
 
 const HTTP_ORIGIN = 'http://localhost:4000'
 
+/**
+ * TODO
+ */
 export interface WidgetParams {
   type: string;
   path: string;
 }
 
+/**
+ * TODO
+ */
 export interface Widgetable {
-  onWidget: (Widget) => void;
+  onWidget: (widget: Widget) => void;
   toWidget: () => WidgetParams;
-}
-
-function iframeSrc({ type, path }: WidgetParams) {
-  return `http://localhost:4000/widget${path}`
 }
 
 const overlayStyles = {
@@ -48,7 +51,11 @@ const widgetStyles = {
   transition: 'transform 250ms ease-out'
 }
 
+/**
+ * TODO
+ */
 export class Widget {
+  // @ts-ignore
   private _sdk: NanopaySDK;
   private _events: EventEmitter;
   $overlay: HTMLElement;
@@ -56,13 +63,18 @@ export class Widget {
   $iframe: HTMLIFrameElement;
   isOpen: boolean;
 
+  /**
+   * TODO
+   * 
+   * @param sdk 
+   */
   constructor(sdk: NanopaySDK) {
     this._sdk = sdk
     this._events = new EventEmitter()
     this.$overlay = window.document.createElement('div')
     this.$widget = window.document.createElement('div')
     this.$iframe = window.document.createElement('iframe')
-    
+    this.isOpen = false
 
     this.$iframe.width = '100%'
     this.$iframe.height = '100%'
@@ -91,6 +103,12 @@ export class Widget {
     })
   }
 
+  /**
+   * TODO
+   * 
+   * @param params 
+   * @returns 
+   */
   async open(params: WidgetParams): Promise<this> {
     if (this.isOpen) {
       // todo throw an error as already open
@@ -99,16 +117,18 @@ export class Widget {
     return new Promise((resolve, reject) => {
       window.document.body.append(this.$overlay)
       this.$iframe.src = iframeSrc(params)
-      this.$iframe.onload = _ => {
+      this.$iframe.onload = () => {
         this.postMessage('handshake')
         //this.postMessage('configure', this.options)
         resolve(this.show())
       }
       this.$iframe.onerror = reject
     })
-    
   }
 
+  /**
+   * TODO
+   */
   async close(): Promise<void> {
     if (this.isOpen) {
       await this.hide()
@@ -117,6 +137,11 @@ export class Widget {
     this._events.removeAllListeners()
   }
 
+  /**
+   * TODO
+   * 
+   * @returns 
+   */
   async show(): Promise<this> {
     return new Promise(resolve => {
       this.$overlay.style.visibility = 'visible'
@@ -131,6 +156,11 @@ export class Widget {
     })
   }
 
+  /**
+   * TODO
+   * 
+   * @returns 
+   */
   async hide(): Promise<this> {
     return new Promise(resolve => {
       this.$overlay.style.opacity = '0'
@@ -143,14 +173,100 @@ export class Widget {
     })
   }
 
+  /**
+   * TODO
+   * 
+   * @param event 
+   * @param listener 
+   * @returns 
+   */
   on(event: string, listener: (...args: any[]) => void): EventEmitter {
     return this._events.on(event, listener)
   }
 
-  postMessage(type, payload = {}) {
-    this.$iframe.contentWindow.postMessage({
-      type,
-      payload
-    }, HTTP_ORIGIN)
+  /**
+   * TODO
+   * 
+   * @param type 
+   * @param payload 
+   */
+  postMessage(type: string, payload: any = {}): void {
+    if (this.$iframe.contentWindow) {
+      this.$iframe.contentWindow.postMessage({
+        type,
+        payload
+      }, HTTP_ORIGIN)
+    }
   }
+}
+
+
+/**
+ * TODO
+ */
+export class WidgetInterface {
+  private _sdk: NanopaySDK;
+  private _widget: Widget | null;
+
+  /**
+   * TODO
+   * 
+   * @param sdk 
+   */
+  constructor(sdk: NanopaySDK) {
+    this._sdk = sdk
+    this._widget = null
+  }
+
+  /**
+   * TODO
+   * 
+   * @param src 
+   * @returns 
+   */
+  async open(src: Widgetable): Promise<Widget> {
+    ensureBrowser()
+    this._widget = new Widget(this._sdk)
+    src.onWidget(this._widget)
+    return this._widget.open(src.toWidget())
+  }
+
+  /**
+   * TODO
+   */
+  async close(): Promise<void> {
+    ensureBrowser()
+    if (this._widget !== null) {
+      await this._widget.hide()
+      this._widget.close()
+      this._widget = null
+    }
+  }
+
+  /**
+   * TODO
+   */
+  get isOpen() {
+    return this._widget !== null
+  }
+}
+
+/**
+ * TODO
+ * 
+ * @param sdk 
+ * @returns 
+ */
+export function createWidgetInterface(sdk: NanopaySDK): WidgetInterface {
+  return new WidgetInterface(sdk)
+}
+
+// TODO
+function ensureBrowser() {
+  if (!isBrowser) throw 'Widget only available in browser environment'
+}
+
+// TODO
+function iframeSrc({ path }: WidgetParams) {
+  return `http://localhost:4000/widget${path}`
 }

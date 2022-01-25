@@ -1,14 +1,13 @@
-import merge from 'ts-deepmerge'
 import { HTTPHeaders } from './api/base'
-
-interface ApiConfig {
-  baseUrl: string;
-  headers?: HTTPHeaders;
-}
 
 export interface Config {
   api?: ApiConfig;
   mapi?: ApiConfig;
+}
+
+export interface ApiConfig {
+  baseUrl: string;
+  headers?: HTTPHeaders;
 }
 
 const defaults: Config = {
@@ -20,8 +19,8 @@ const defaults: Config = {
   }
 }
 
-export function getEnv(opts: Config, key: string) {
-  const a = defaults[key] || {}
-  const b = opts[key] || {}
-  return merge(a, b)
+export function getEnv(opts: Config, key: string): any {
+  const a = defaults[key as keyof Config] || {}
+  const b = opts[key as keyof Config] || {}
+  return {...a, ...b}
 }

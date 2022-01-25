@@ -2,7 +2,7 @@ const esbuild = require('esbuild')
 const GlobalsPlugin = require('esbuild-plugin-globals')
 
 esbuild.build({
-  entryPoints: ['src/index.browser.ts'],
+  entryPoints: ['src/index.ts'],
   outfile: 'dist/nanopay.js',
   bundle: true,
   format: 'iife',
