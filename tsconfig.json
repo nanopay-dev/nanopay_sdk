@@ -25,6 +25,7 @@
     "strict": true,
     "target": "ES2019",
     "useDefineForClassFields": false,
+    "resolveJsonModule": true
   },
   "include": [
     "src"

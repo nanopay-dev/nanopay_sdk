@@ -1,0 +1,7 @@
+{
+  "payload": "{\"apiVersion\":\"1.4.0\",\"timestamp\":\"2021-11-13T07:37:44.8783319Z\",\"txid\":\"fed22f5ab54202e2ec39cb745d427fcfff960254cde0cf283493ac545f5737f6\",\"returnResult\":\"success\",\"resultDescription\":\"\",\"minerId\":\"030d1fe5c1b560efe196ba40540ce9017c20daa9504c4c4cec6184fc702d9f274e\",\"currentHighestBlockHash\":\"39e3a2a0e7ba1b9e331cfd396cef1a2d3baffa51624af2f5512e530f35a8aa43\",\"currentHighestBlockHeight\":151,\"txSecondMempoolExpiry\":0}",
+  "signature": "30440220160ff70b73297043a8ce9636f5abdc7d91918b4428e79876a405b080882d1c920220161b919399f50f16d8c9f922c13b94909d6e3a25480f09812c73f9ef52f8f542",
+  "publicKey": "030d1fe5c1b560efe196ba40540ce9017c20daa9504c4c4cec6184fc702d9f274e",
+  "encoding": "UTF-8",
+  "mimetype": "application/json"
+}
