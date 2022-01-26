@@ -54,6 +54,7 @@ export class NanopaySDK {
    * Creates a new Nanopay SDK instance.
    * 
    * @param opts Config options
+   * @internal
    */
   constructor(opts: Config = {}) {
     this.opts = opts
