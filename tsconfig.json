@@ -27,9 +27,9 @@
     "useDefineForClassFields": false,
   },
   "include": [
-    "src/**/*.ts"
+    "src"
   ],
   "files": [
-    "global.d.ts", 
+    "global.d.ts"
   ]
 }

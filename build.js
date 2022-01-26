@@ -1,5 +1,5 @@
-const esbuild = require('esbuild')
-const GlobalsPlugin = require('esbuild-plugin-globals')
+import esbuild from 'esbuild'
+import GlobalsPlugin from 'esbuild-plugin-globals'
 
 esbuild.build({
   entryPoints: ['src/index.ts'],

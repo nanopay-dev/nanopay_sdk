@@ -1,24 +1,40 @@
+/**
+ * Base HTTP client module.
+ * 
+ * @internal
+ * @module
+ */
+
 import ky from 'ky-universal'
 
 /**
- * TODO
+ * HTTP headers used in a request
  */
 export interface HTTPHeaders {
   [header: string]: string;
 }
 
 /**
- * TODO
+ * Base HTTP client.
+ * 
+ * @internal
  */
 export class BaseClient {
+  /**
+   * Base URL
+   */
   baseUrl: string;
+
+  /**
+   * HTTP headers object
+   */
   headers?: HTTPHeaders;
 
   /**
-   * TODO
+   * Creates a new base client using the given `baseUrl` and [[HTTPHeaders]].
    * 
-   * @param baseUrl - todo
-   * @param headers - todo
+   * @param baseUrl - Base URL
+   * @param headers - HTTP headers object
    */
   constructor(baseUrl: string, headers?: HTTPHeaders) {
     this.baseUrl = baseUrl
@@ -26,7 +42,7 @@ export class BaseClient {
   }
 
   /**
-   * TODO
+   * Fetch the given `path` using a GET request.
    * 
    * @param path 
    * @param headers 
@@ -45,7 +61,7 @@ export class BaseClient {
   }
 
   /**
-   * TODO
+   * Fetch the given `path` using a POST request.
    * 
    * @param path 
    * @param data 

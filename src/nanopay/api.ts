@@ -1,20 +1,46 @@
+/**
+ * This module exports an API client used to interface directly with the
+ * Nanopay API.
+ * 
+ * An instance of the [[ApiClient]] is exposed on the Nanopay SDK instance, and
+ * is used to interact with the Nanopay API.
+ * 
+ * @module
+ */
+
 import { NanopaySDK } from '../index'
 import { getEnv } from './config'
 import { BaseClient } from './api/base'
 import { PayRequest } from './pay_request'
 
 /**
- * TODO
+ * Valid paramaters required create a Pay Request through the Nanopay API.
  */
 export interface PayRequestParams {
+  /**
+   * Max 140 character description of the Pay Request.
+   */
   description: string;
+
+  /**
+   * Number of satoshis required to fund the transaction (sum of outputs and fee)
+   */
   satoshis: number;
+
+  /**
+   * TODO
+   */
   keypath?: string;
+
+  /**
+   * Pay Request transaction context parameters.
+   */
   ctx: PayRequestCtxParams;
 }
 
 /**
- * TODO
+ * Valid Pay Request transaction context parameters. Used to create valid
+ * signatures server-side.
  */
 export interface PayRequestCtxParams {
   outhash: string;
@@ -24,7 +50,7 @@ export interface PayRequestCtxParams {
 }
 
 /**
- * TODO
+ * The response data of a Pay Request.
  */
 export interface PayRequestData {
   id: string;
@@ -38,15 +64,21 @@ export interface PayRequestData {
 }
 
 /**
- * TODO
+ * Nanopay API client.
  */
 export class ApiClient {
+  /**
+   * Configured low-level base API client.
+   * 
+   * @private
+   */
   private _api: BaseClient;
 
   /**
-   * TODO
+   * Creates a new Nanopay API client.
    * 
-   * @param baseUrl 
+   * @param baseUrl Base URL of remote API
+   * @internal
    */
   constructor(baseUrl: string) {
     this._api = new BaseClient(baseUrl, {
@@ -56,10 +88,10 @@ export class ApiClient {
   }
 
   /**
-   * TODO
+   * Loads a Pay Request from the given ID.
    * 
-   * @param id 
-   * @returns 
+   * @param id Pay Request ID
+   * @returns Pay Request data
    */
   async loadPayRequest(id: string): Promise<PayRequestData> {
     const res = await this._api.get(`pay_requests/${id}`)
@@ -67,10 +99,10 @@ export class ApiClient {
   }
 
   /**
-   * TODO
+   * Creates a Pay Request from the given parameters. 
    * 
-   * @param params 
-   * @returns 
+   * @param params Pay Request params
+   * @returns Pay Request data
    */
   async createPayRequest(params: PayRequestParams): Promise<PayRequestData> {
     const res = await this._api.post('pay_requests', params)
@@ -78,10 +110,10 @@ export class ApiClient {
   }
 
   /**
-   * TODO
+   * Confirms a Pay Request as completed.
    * 
-   * @param payRequest 
-   * @returns 
+   * @param payRequest Pay Request class instance
+   * @returns Pay Request data
    */
   async completePayRequest(payRequest: PayRequest): Promise<any> {
     const res = await this._api.post(`pay_requests/${payRequest.data.id}/complete`, { txid: payRequest.tx.id() })
@@ -90,10 +122,11 @@ export class ApiClient {
 }
 
 /**
- * TODO
+ * Creates and returns a new Nanopay API client.
  * 
- * @param sdk 
- * @returns 
+ * @param sdk Nanopay SDK instance
+ * @returns Nanopay API client
+ * @internal
  */
 export function createApiClient(sdk: NanopaySDK): ApiClient {
   const { baseUrl } = getEnv(sdk.opts, 'api')

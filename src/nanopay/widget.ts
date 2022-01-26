@@ -1,25 +1,29 @@
+/**
+ * This module exports the [[Widget]] and [[WidgetInterface]] classes.
+ * 
+ * An instance of the [[WidgetInterface]] is exposed on the Nanopay SDK
+ * instance, and is used to create, open and load [[Widget]] instances.
+ * 
+ * The Widget class itself is only used internally but is documented here for
+ * reference.
+ * 
+ * ## Example
+ * 
+ * ```javascript
+ * const payRequest = await nanopay.payRequest.create(params)
+ * 
+ * // Opens the Pay Request in the widget
+ * nanopay.widget.open(payRequest)
+ * ```
+ * @module
+ */
+
 import { isBrowser } from 'browser-or-node'
 import EventEmitter from 'eventemitter3'
 import { NanopaySDK } from '../index'
+import { getEnv } from './config'
 
-const HTTP_ORIGIN = 'http://localhost:4000'
-
-/**
- * TODO
- */
-export interface WidgetParams {
-  type: string;
-  path: string;
-}
-
-/**
- * TODO
- */
-export interface Widgetable {
-  onWidget: (widget: Widget) => void;
-  toWidget: () => WidgetParams;
-}
-
+// Widget styles
 const overlayStyles = {
   position: 'fixed',
   top: '0',
@@ -52,21 +56,74 @@ const widgetStyles = {
 }
 
 /**
- * TODO
+ * Widgetable interface. Any objects that are meant to be viewed in a Widget
+ * instance must implement the functions described in this interface.
+ */
+export interface Widgetable {
+  /**
+   * Callback that handles when a resource has been mounted in a Widget instance.
+   * 
+   * @param widget Widget instance
+   */
+  onWidget(widget: Widget): void;
+
+  /**
+   * Function that returns a URL that the widget will open.
+   */
+  toWidget(): WidgetURL;
+}
+
+/**
+ * Valid URL that may be rendered in a URL.
+ */
+export type WidgetURL = string;
+
+/**
+ * Widget class. The [[WidgetInterface]] on the SDK is responsible for creating,
+ * opening and closing Widget instances.
+ * 
+ * The Widget API is documented here for reference but is ordinarily not
+ * interacted with directly.
  */
 export class Widget {
-  // @ts-ignore
+  /**
+   * Nanopay SDK instance.
+   * 
+   * @private
+   */
   private _sdk: NanopaySDK;
+
+  /**
+   * Event Emitter.
+   * 
+   * @private
+   */
   private _events: EventEmitter;
+
+  /**
+   * Overlay HTML element.
+   */
   $overlay: HTMLElement;
+
+  /**
+   * Widget HTML element.
+   */
   $widget: HTMLElement;
+
+  /**
+   * iFrame HTML element.
+   */
   $iframe: HTMLIFrameElement;
+
+  /**
+   * Is true if the Widget is open.
+   */
   isOpen: boolean;
 
   /**
-   * TODO
+   * Creates a new Widget instance.
    * 
-   * @param sdk 
+   * @param sdk Nanopay SDK instance
    */
   constructor(sdk: NanopaySDK) {
     this._sdk = sdk
@@ -85,9 +142,11 @@ export class Widget {
     this.$widget.append(this.$iframe)
     this.$overlay.append(this.$widget)
 
+    const opts = getEnv(this._sdk.opts, 'widget')
+
     window.addEventListener('message', event => {
       if (
-        event.origin === HTTP_ORIGIN &&
+        event.origin === opts.origin &&
         event.source === this.$iframe.contentWindow
       ) {
         this._events.emit(event.data.type, event.data.payload)
@@ -104,19 +163,23 @@ export class Widget {
   }
 
   /**
-   * TODO
+   * Opens the Widget for the given `src` item. The item must be an object that
+   * conforms to the [[Widgetable]] interface.
    * 
-   * @param params 
-   * @returns 
+   * @param src Widgetable source item
+   * @returns Widget
    */
-  async open(params: WidgetParams): Promise<this> {
+  async open(src: Widgetable): Promise<this> {
     if (this.isOpen) {
       // todo throw an error as already open
     }
 
+    const opts = getEnv(this._sdk.opts, 'widget')
+    const url = opts.origin + src.toWidget()
+
     return new Promise((resolve, reject) => {
       window.document.body.append(this.$overlay)
-      this.$iframe.src = iframeSrc(params)
+      this.$iframe.src = url
       this.$iframe.onload = () => {
         this.postMessage('handshake')
         //this.postMessage('configure', this.options)
@@ -127,20 +190,19 @@ export class Widget {
   }
 
   /**
-   * TODO
+   * Closes the Widget and removes all event listeners.
    */
   async close(): Promise<void> {
     if (this.isOpen) {
       await this.hide()
     }
-    this.$overlay.remove()
     this._events.removeAllListeners()
   }
 
   /**
-   * TODO
+   * Displays the Widget.
    * 
-   * @returns 
+   * @returns Widget
    */
   async show(): Promise<this> {
     return new Promise(resolve => {
@@ -157,7 +219,7 @@ export class Widget {
   }
 
   /**
-   * TODO
+   * Hides the Widget.
    * 
    * @returns 
    */
@@ -174,44 +236,58 @@ export class Widget {
   }
 
   /**
-   * TODO
+   * Add a listener for a given event.
    * 
-   * @param event 
-   * @param listener 
-   * @returns 
+   * @param event Event name
+   * @param listener Listener function
+   * @returns Event emitter
    */
   on(event: string, listener: (...args: any[]) => void): EventEmitter {
     return this._events.on(event, listener)
   }
 
   /**
-   * TODO
+   * Posts a message payload to the iFrame origin.
    * 
-   * @param type 
-   * @param payload 
+   * @param type Message type
+   * @param payload Message payload
    */
   postMessage(type: string, payload: any = {}): void {
+    const opts = getEnv(this._sdk.opts, 'widget')
+
     if (this.$iframe.contentWindow) {
       this.$iframe.contentWindow.postMessage({
         type,
         payload
-      }, HTTP_ORIGIN)
+      }, opts.origin)
     }
   }
 }
 
-
 /**
- * TODO
+ * Widget Interface class. An instance of this class is exposed on the SDK
+ * instance to create, open and close Widgets.
  */
 export class WidgetInterface {
+  /**
+   * Nanopay SDK instance
+   * 
+   * @private
+   */
   private _sdk: NanopaySDK;
+
+  /**
+   * Widget instance
+   * 
+   * @private
+   */
   private _widget: Widget | null;
 
   /**
-   * TODO
+   * Creates a new Widget Interface instance.
    * 
-   * @param sdk 
+   * @param sdk Nanopay SDK instance
+   * @internal
    */
   constructor(sdk: NanopaySDK) {
     this._sdk = sdk
@@ -219,54 +295,52 @@ export class WidgetInterface {
   }
 
   /**
-   * TODO
+   * Opens a widget for the given `src` item. The item must be an instance that
+   * conforms to the [[Widgetable]] interface.
    * 
-   * @param src 
-   * @returns 
+   * @param src Widgetable source item
+   * @returns Widget instance
    */
   async open(src: Widgetable): Promise<Widget> {
     ensureBrowser()
     this._widget = new Widget(this._sdk)
+
     src.onWidget(this._widget)
-    return this._widget.open(src.toWidget())
+    return this._widget.open(src)
   }
 
   /**
-   * TODO
+   * Closes and destroys the currently open Widget.
    */
   async close(): Promise<void> {
     ensureBrowser()
     if (this._widget !== null) {
       await this._widget.hide()
-      this._widget.close()
+      await this._widget.close()
       this._widget = null
     }
   }
 
   /**
-   * TODO
+   * Is true if a Widget is currently open.
    */
-  get isOpen() {
+  get isOpen(): boolean {
     return this._widget !== null
   }
 }
 
 /**
- * TODO
+ * Create and returns a new Widget interface.
  * 
- * @param sdk 
- * @returns 
+ * @param sdk Nanopay SDK instance
+ * @returns Widget interface
+ * @internal
  */
 export function createWidgetInterface(sdk: NanopaySDK): WidgetInterface {
   return new WidgetInterface(sdk)
 }
 
-// TODO
+// Throws an error unless the environment is a web browser
 function ensureBrowser() {
   if (!isBrowser) throw 'Widget only available in browser environment'
-}
-
-// TODO
-function iframeSrc({ path }: WidgetParams) {
-  return `http://localhost:4000/widget${path}`
 }

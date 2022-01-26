@@ -1,0 +1,7 @@
+{
+  "name": "Nanopay SDK",
+  "entryPoints": "src",
+  "entryPointStrategy": "expand",
+  "excludeInternal": true,
+  "excludePrivate": true
+}
