@@ -573,13 +573,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browser-or-node@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "browser-or-node@npm:2.0.0"
-  checksum: 0a228822b59bba8d643f8672f03176acfb16a790480a558bce9148fb65a429994f44e66e176391e014f00458b32df0f0fc12447e6f6f5e0d92af229152f2cc10
-  languageName: node
-  linkType: hard
-
 "browser-process-hrtime@npm:^1.0.0":
   version: 1.0.0
   resolution: "browser-process-hrtime@npm:1.0.0"
@@ -2476,7 +2469,6 @@ __metadata:
   dependencies:
     "@ikscodes/browser-env": ^1.0.0
     ava: ^4.0.1
-    browser-or-node: ^2.0.0
     bsv: ^2.0.10
     deepmerge: ^4.2.2
     esbuild: ^0.13.12

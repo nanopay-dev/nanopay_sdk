@@ -18,7 +18,6 @@
  * @module
  */
 
-//import { isBrowser } from 'browser-or-node'
 import EventEmitter from 'eventemitter3'
 import { NanopaySDK } from '../index'
 import { getEnv } from './config'
