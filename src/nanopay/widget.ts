@@ -18,7 +18,7 @@
  * @module
  */
 
-import { isBrowser } from 'browser-or-node'
+//import { isBrowser } from 'browser-or-node'
 import EventEmitter from 'eventemitter3'
 import { NanopaySDK } from '../index'
 import { getEnv } from './config'
@@ -65,7 +65,7 @@ export interface Widgetable {
    * 
    * @param widget Widget instance
    */
-  onWidget(widget: Widget): void;
+  onWidget?: (widget: Widget) => void;
 
   /**
    * Function that returns a URL that the widget will open.
@@ -196,6 +196,7 @@ export class Widget {
     if (this.isOpen) {
       await this.hide()
     }
+    this.$overlay.remove()
     this._events.removeAllListeners()
   }
 
@@ -305,7 +306,10 @@ export class WidgetInterface {
     ensureBrowser()
     this._widget = new Widget(this._sdk)
 
-    src.onWidget(this._widget)
+    if (typeof src.onWidget === 'function') {
+      src.onWidget(this._widget)
+    }
+    
     return this._widget.open(src)
   }
 
@@ -342,5 +346,7 @@ export function createWidgetInterface(sdk: NanopaySDK): WidgetInterface {
 
 // Throws an error unless the environment is a web browser
 function ensureBrowser() {
-  if (!isBrowser) throw 'Widget only available in browser environment'
+  if (typeof window === 'undefined' || typeof window.document === 'undefined') {
+    throw 'Widget only available in browser environment'
+  }
 }

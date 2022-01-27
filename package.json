@@ -11,6 +11,7 @@
     "test": "env TS_NODE_FILES=true ava"
   },
   "devDependencies": {
+    "@ikscodes/browser-env": "^1.0.0",
     "ava": "^4.0.1",
     "bsv": "^2.0.10",
     "esbuild": "^0.13.12",
