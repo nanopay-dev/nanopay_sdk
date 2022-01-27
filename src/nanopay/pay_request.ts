@@ -128,6 +128,9 @@ export class PayRequest {
     this.data = params.data
     
     this._events = new EventEmitter()
+    this.on('success', () => {
+      this._sdk.api.completePayRequest(this)
+    })
     setTimeout(() => this._events.emit('created', this))
   }
 
@@ -178,10 +181,6 @@ export class PayRequest {
         this._events.emit('funded', this)
         await this.pushTx(data.parent)
       }
-    })
-
-    this.on('success', () => {
-      this._sdk.api.completePayRequest(this)
     })
   }
 
