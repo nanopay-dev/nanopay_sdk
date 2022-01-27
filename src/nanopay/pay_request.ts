@@ -297,7 +297,7 @@ function buildTx(params: PayRequestAttrs): BsvTx {
   } else if (params.tx) {
     return params.tx
   } else {
-    throw 'Tx could not be determined from given params'
+    throw new Error('Tx not given in params')
   }
 }
 

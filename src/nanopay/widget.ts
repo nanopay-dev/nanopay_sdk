@@ -346,6 +346,6 @@ export function createWidgetInterface(sdk: NanopaySDK): WidgetInterface {
 // Throws an error unless the environment is a web browser
 function ensureBrowser() {
   if (typeof window === 'undefined' || typeof window.document === 'undefined') {
-    throw 'Widget only available in browser environment'
+    throw new Error('Widget requires browser environment')
   }
 }
