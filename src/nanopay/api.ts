@@ -56,11 +56,39 @@ export interface PayRequestData {
   id: string;
   description: string;
   status: string;
-  amount: string;
-  fee: string;
+  amount: MoneyData;
+  fee: MoneyData;
   payment: { [method: string]: string };
   created_at: string;
-  completed_at: string;
+  completed_at: string | null;
+}
+
+/**
+ * Pay Request money data.
+ */
+export interface MoneyData {
+  amount: string;
+  currency: string
+}
+
+/**
+ * TODO
+ */
+export interface ValidationErrors {
+  [attribute: string]: string[]
+}
+
+/**
+ * TODO
+ */
+export class ApiError extends Error {
+  errors: ValidationErrors;
+
+  constructor(message: string, errors: ValidationErrors) {
+    super(message)
+    this.errors = errors
+    this.name = 'ApiError'
+  }
 }
 
 /**
@@ -95,7 +123,11 @@ export class ApiClient {
    */
   async loadPayRequest(id: string): Promise<PayRequestData> {
     const res = await this._api.get(`pay_requests/${id}`)
-    return res.ok ? res.data : Promise.reject(res)
+    if (res.ok) {
+      return res.data
+    } else {
+      return Promise.reject(new ApiError('Pay Request not found', res.error))
+    }
   }
 
   /**
@@ -106,7 +138,11 @@ export class ApiClient {
    */
   async createPayRequest(params: PayRequestParams): Promise<PayRequestData> {
     const res = await this._api.post('pay_requests', params)
-    return res.ok ? res.data : Promise.reject(res)
+    if (res.ok) {
+      return res.data
+    } else {
+      return Promise.reject(new ApiError('Invalid Pay Request', res.errors))
+    }
   }
 
   /**
@@ -116,8 +152,13 @@ export class ApiClient {
    * @returns Pay Request data
    */
   async completePayRequest(payRequest: PayRequest): Promise<any> {
-    const res = await this._api.post(`pay_requests/${payRequest.data.id}/complete`, { txid: payRequest.tx.id() })
-    return res.ok ? res.data : Promise.reject(res)
+    const txid = payRequest.tx.id()
+    const res = await this._api.post(`pay_requests/${payRequest.data.id}/complete`, { txid })
+    if (res.ok) {
+      return res.data
+    } else {
+      return Promise.reject(new ApiError('Pay Request not completed', res.error))
+    }
   }
 }
 
