@@ -56,9 +56,12 @@ test('load(id, params) loads a pay request', async (t) => {
     .reply(200, test1)
   
   const nanopay = Nanopay()
+  const tx = new bsv.Tx()
+  tx.addTxOut(bsv.Bn(10000-22), bsv.Script.fromHex('76a91412ab8dc588ca9d5787dde7eb29569da63c3a238c88ac'))
+
   const payReq = await nanopay.payRequest.load('pr-1', {
     description: 'Test payment',
-    tx: new bsv.Tx()
+    tx
   })
 
   t.assert(payReq instanceof PayRequest)
@@ -66,7 +69,20 @@ test('load(id, params) loads a pay request', async (t) => {
   scope.done()
 })
 
-test.todo('load(id, params) throws error if params dont match')
+test('load(id, params) throws error if params dont match', async (t) => {
+  const scope = nock('https://api.nanopay.cash/v1')
+    .get('/pay_requests/pr-1')
+    .reply(200, test1)
+
+  const nanopay = Nanopay()
+  const request = nanopay.payRequest.load('pr-1', {
+    description: 'Test payment',
+    tx: new bsv.Tx()
+  })
+
+  await t.throwsAsync(request, { message: 'Tx does not match' })
+  scope.done()
+})
 
 test('payRequest instance lifecycle', async (t) => {
   // Setup mocks

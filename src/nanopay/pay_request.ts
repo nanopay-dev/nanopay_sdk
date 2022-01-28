@@ -274,12 +274,15 @@ export class PayRequestInterface {
    */
   async load(id: string, params: PayRequestAttrs): Promise<PayRequest> {
     const tx = buildTx(params)
-    //const fees = params.fees || getEnv(this._sdk.opts, 'fees')
-    //const satoshis = calculateSats(tx, fees)
+    const fees = params.fees || getEnv(this._sdk.opts, 'fees')
+    const satoshis = calculateSats(tx, fees)
     //const outhash = tx.hashOutputs().toString('hex')
     const data = await this._sdk.api.loadPayRequest(id)
 
-    // TODO check of payrequest matches - if not raise error
+    // TODO also check outhash
+    if (Number(data.amount.amount) * 100000000 !== satoshis) {
+      throw new Error('Tx does not match')
+    }
 
     return new PayRequest({
       sdk: this._sdk,
