@@ -128,8 +128,11 @@ export class PayRequest {
     this.data = params.data
     
     this._events = new EventEmitter()
-    this.on('success', () => {
-      this._sdk.api.completePayRequest(this)
+    this.on('success', async () => {
+      this.data = await this._sdk.api.completePayRequest(this)
+      if (this.data.status === 'completed') {
+        this._events.emit('completed', this)
+      }
     })
     setTimeout(() => this._events.emit('created', this))
   }
