@@ -1,12 +1,13 @@
 {
   "name": "nanopay-sdk",
   "version": "0.1.0",
-  "main": "src/index.ts",
+  "main": "dist/nanopay.js",
+  "types": "src/types.ts",
   "type": "module",
   "license": "Apache-2.0",
   "scripts": {
-    "build:ts": "rm -rf dist && tsc --project tsconfig.json",
-    "build": "rm -rf dist && node build.js",
+    "build": "yarn run clean && node build.js",
+    "clean": "rm -rf dist",
     "docs": "typedoc",
     "test": "env TS_NODE_FILES=true ava"
   },

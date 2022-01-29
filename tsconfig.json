@@ -1,19 +1,21 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
+    "allowJs": false,
+    "alwaysStrict": true,
     "declaration": true,
-    "emitDeclarationOnly": true,
+    //"declarationMap": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-
+    "isolatedModules": false,
     "lib": [
-			"ES2019",
-			"DOM",
-      "DOM.Iterable"
+			"es6",
+			"dom"
 		],
-    "module": "ES2020",
+    "module": "es2020",
     "moduleResolution": "node",
-
-    //"noEmitOnError": true,
+    "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
 		"noImplicitOverride": true,
@@ -21,11 +23,12 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
 		"noUnusedParameters": true,
-
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
     "strict": true,
-    "target": "ES2019",
+    "target": "es6",
     "useDefineForClassFields": false,
-    "resolveJsonModule": true
   },
   "include": [
     "src"

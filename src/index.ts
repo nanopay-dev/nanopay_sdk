@@ -71,22 +71,10 @@ export class NanopaySDK {
  * @param opts Config options
  * @returns Nanopay SDK instance
  */
-export default function(opts: Config = {}): NanopaySDK {
+export default function Nanopay(opts: Config = {}): NanopaySDK {
   return new NanopaySDK(opts)
 }
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && typeof window.document !== 'undefined') {
   window.Nanopay = Nanopay
 }
-
-declare global {
-  function Nanopay(opts: Config): NanopaySDK; 
-}
-
-// Export types
-//export { Config, ApiConfig } from './nanopay/config'
-//export { ApiClient, PayRequestParams, PayRequestCtxParams, PayRequestData } from './nanopay/api'
-//export { MapiClient, GetTxPayload, PushTxPayload, PushTxsItem, FeeQuotes, FeeQuote } from './nanopay/mapi'
-//export { BaseClient, HTTPHeaders } from './nanopay/api/base'
-//export { PayRequest, PayRequestInterface, PayRequestProps, PayRequestOpts } from './nanopay/pay_request'
-//export { Widget, WidgetInterface, WidgetParams, Widgetable } from './nanopay/widget'
