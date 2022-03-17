@@ -1,9 +1,12 @@
 {
-  "name": "nanopay-sdk",
+  "name": "@nanopay/sdk",
   "version": "0.1.0-alpha.1",
-  "main": "dist/nanopay.js",
-  "types": "src/types.ts",
   "type": "module",
+  "main": "dist/nanopay.js",
+  "module": "dist/nanopay.js",
+  "browser": "dist/nanopay.min.js",
+  "unpkg": "dist/nanopay.min.js",
+  "types": "src/types.ts",
   "license": "Apache-2.0",
   "scripts": {
     "build": "yarn run clean && node build.js",
