@@ -11,7 +11,7 @@ test('Nanopay() returns Nanopay SDK instance', (t) => {
   t.true(typeof nanopay.opts === 'object')
   t.true(nanopay.api instanceof ApiClient)
   t.true(nanopay.mapi instanceof MapiClient)
-  t.true(nanopay.payRequest instanceof PayRequestInterface)
+  t.true(nanopay.payRequests instanceof PayRequestInterface)
   t.true(nanopay.widget instanceof WidgetInterface)
 })
 

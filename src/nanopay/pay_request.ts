@@ -162,7 +162,7 @@ export class PayRequest {
     const payload = await this._sdk.mapi.pushTx(pushArgs)
     const success = typeof payload.txs === 'undefined' ?
       payload.returnResult === 'success' :
-      payload.txs.every(tx => tx.returnResult === 'success');
+      payload.txs.find(tx => tx.txid === this.tx.id() && tx.returnResult === 'success');
 
     this.mapi = payload
     if (success) this._events.emit('success', this);
@@ -194,7 +194,7 @@ export class PayRequest {
    * @internal
    */
   toWidget(): WidgetURL {
-    return `/v1/pay_requests/${ this.data.id }`
+    return `/pay_requests/${ this.data.id }`
   }
 
   /**

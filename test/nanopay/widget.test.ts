@@ -11,7 +11,7 @@ const mock = {
 }
 
 test('open(Widgetable) and close() adds and removes widget UI from DOM', async (t) => {
-  const scope = nock('https://www.nanopay.com')
+  const scope = nock('https://www.nanopay.com/widget/v1')
     .get('/widget')
     .reply(200, '<p>Test widget</p>')
 

@@ -12,12 +12,12 @@ import test3 from '../fixtures/mapi.pushtx.multi.json'
 import test4 from '../fixtures/payrequest.complete.json'
 
 test('create(params) creates a new pay request', async (t) => {
-  const scope = nock('https://api.nanopay.cash/v1')
+  const scope = nock('https://www.nanopay.cash/api/v1')
     .post('/pay_requests')
     .reply(200, test1)
   
   const nanopay = Nanopay()
-  const payReq = await nanopay.payRequest.create({
+  const payReq = await nanopay.payRequests.create({
     description: 'Test payment',
     tx: new bsv.Tx()
   })
@@ -28,12 +28,12 @@ test('create(params) creates a new pay request', async (t) => {
 })
 
 test('create(params) throws error with invalid description', async (t) => {
-  const scope = nock('https://api.nanopay.cash/v1')
+  const scope = nock('https://www.nanopay.cash/api/v1')
     .post('/pay_requests')
     .reply(200, test2)
   
   const nanopay = Nanopay()
-  const request = nanopay.payRequest.create({
+  const request = nanopay.payRequests.create({
     description: '',
     tx: new bsv.Tx()
   })
@@ -44,14 +44,14 @@ test('create(params) throws error with invalid description', async (t) => {
 
 test('create(params) throws error with invalid tx', async (t) => {  
   const nanopay = Nanopay()
-  const request = nanopay.payRequest.create({
+  const request = nanopay.payRequests.create({
     description: 'Test payment'
   })
   await t.throwsAsync(request, { message: 'Tx not given in params' })
 })
 
 test('load(id, params) loads a pay request', async (t) => {
-  const scope = nock('https://api.nanopay.cash/v1')
+  const scope = nock('https://www.nanopay.cash/api/v1')
     .get('/pay_requests/pr-1')
     .reply(200, test1)
   
@@ -59,7 +59,7 @@ test('load(id, params) loads a pay request', async (t) => {
   const tx = new bsv.Tx()
   tx.addTxOut(bsv.Bn(10000-22), bsv.Script.fromHex('76a91412ab8dc588ca9d5787dde7eb29569da63c3a238c88ac'))
 
-  const payReq = await nanopay.payRequest.load('pr-1', {
+  const payReq = await nanopay.payRequests.load('pr-1', {
     description: 'Test payment',
     tx
   })
@@ -70,12 +70,12 @@ test('load(id, params) loads a pay request', async (t) => {
 })
 
 test('load(id, params) throws error if params dont match', async (t) => {
-  const scope = nock('https://api.nanopay.cash/v1')
+  const scope = nock('https://www.nanopay.cash/api/v1')
     .get('/pay_requests/pr-1')
     .reply(200, test1)
 
   const nanopay = Nanopay()
-  const request = nanopay.payRequest.load('pr-1', {
+  const request = nanopay.payRequests.load('pr-1', {
     description: 'Test payment',
     tx: new bsv.Tx()
   })
@@ -86,7 +86,7 @@ test('load(id, params) throws error if params dont match', async (t) => {
 
 test('payRequest instance lifecycle', async (t) => {
   // Setup mocks
-  const scope1 = nock('https://api.nanopay.cash/v1')
+  const scope1 = nock('https://www.nanopay.cash/api/v1')
     .post('/pay_requests')
     .reply(200, test1)
 
@@ -94,15 +94,16 @@ test('payRequest instance lifecycle', async (t) => {
     .post(`/txs`)
     .reply(200, test3)
 
-  const scope3 = nock('https://api.nanopay.cash/v1')
+  const scope3 = nock('https://www.nanopay.cash/api/v1')
     .post('/pay_requests/pr-1/complete')
     .reply(200, test4)
   
   const nanopay = Nanopay()
-  const payReq = await nanopay.payRequest.create({
+  const payReq = await nanopay.payRequests.create({
     description: 'Test payment',
     tx: new bsv.Tx()
   })
+  console.log('created')
 
   // Create a mockWidget
   const mockWidget = new EventEmitter()
@@ -125,8 +126,11 @@ test('payRequest instance lifecycle', async (t) => {
   })
 
   await t.notThrowsAsync(fundedEvent)
+  console.log('funded')
   await t.notThrowsAsync(successEvent)
+  console.log('success')
   await t.notThrowsAsync(completedEvent)
+  console.log('completed')
 
   t.assert(payReq.mapi)
   t.is(payReq.data.status, 'completed')

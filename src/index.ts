@@ -43,7 +43,7 @@ export class NanopaySDK {
   /**
    * Pay Request interface.
    */
-  payRequest: PayRequestInterface;
+  payRequests: PayRequestInterface;
 
   /**
    * UI Widget interface.
@@ -60,7 +60,7 @@ export class NanopaySDK {
     this.opts = opts
     this.api = createApiClient(this)
     this.mapi = createMapiClient(this)
-    this.payRequest = createPayRequestInterface(this)
+    this.payRequests = createPayRequestInterface(this)
     this.widget = createWidgetInterface(this)
   }
 }

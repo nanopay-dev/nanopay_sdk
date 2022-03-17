@@ -8,7 +8,7 @@ import test2 from '../fixtures/payrequest.error.json'
 import test3 from '../fixtures/payrequest.notfound.json'
 
 test('createPayRequest(params) with valid params returns a pay request data', async (t) => {
-  const scope = nock('https://api.nanopay.cash/v1')
+  const scope = nock('https://www.nanopay.cash/api/v1')
     .post('/pay_requests')
     .reply(200, test1)
 
@@ -21,7 +21,7 @@ test('createPayRequest(params) with valid params returns a pay request data', as
 })
 
 test('createPayRequest(params) with invalid params throws an error', async (t) => {
-  const scope = nock('https://api.nanopay.cash/v1')
+  const scope = nock('https://www.nanopay.cash/api/v1')
     .post('/pay_requests')
     .reply(200, test2)
 
@@ -36,7 +36,7 @@ test('createPayRequest(params) with invalid params throws an error', async (t) =
 })
 
 test('loadPayRequest(id) with known id returns a pay request data', async (t) => {
-  const scope = nock('https://api.nanopay.cash/v1')
+  const scope = nock('https://www.nanopay.cash/api/v1')
     .get('/pay_requests/pr-1')
     .reply(200, test1)
   
@@ -48,7 +48,7 @@ test('loadPayRequest(id) with known id returns a pay request data', async (t) =>
 })
 
 test('loadPayRequest(id) with unknown id throws an error', async (t) => {
-  const scope = nock('https://api.nanopay.cash/v1')
+  const scope = nock('https://www.nanopay.cash/api/v1')
     .get('/pay_requests/pr-xxx')
     .reply(404, test3)
   

@@ -6,7 +6,7 @@
  * ```javascript
  * const defaults = {
  *   api: {
- *     baseUrl: 'https://api.nanopay.cash/v1'
+ *     baseUrl: 'https://www.nanopay.cash/api/v1'
  *   },
  *   mapi: {
  *     baseUrl: 'https://mapi.taal.com/mapi',
@@ -68,7 +68,7 @@ export interface ApiConfig {
 
 const defaults: Config = {
   api: {
-    baseUrl: 'https://api.nanopay.cash/v1'
+    baseUrl: 'https://www.nanopay.cash/api/v1'
   },
   mapi: {
     baseUrl: 'https://mapi.taal.com/mapi'

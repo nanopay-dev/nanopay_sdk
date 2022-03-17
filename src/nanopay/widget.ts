@@ -132,16 +132,17 @@ export class Widget {
     this.$iframe = window.document.createElement('iframe')
     this.isOpen = false
 
+    const opts = getEnv(this._sdk.opts, 'widget')
+
     this.$iframe.width = '100%'
     this.$iframe.height = '100%'
+    this.$iframe.setAttribute('allow', `clipboard-write self ${opts.origin}`)
 
     Object.assign(this.$overlay.style, overlayStyles)
     Object.assign(this.$widget.style, widgetStyles)
 
     this.$widget.append(this.$iframe)
     this.$overlay.append(this.$widget)
-
-    const opts = getEnv(this._sdk.opts, 'widget')
 
     window.addEventListener('message', event => {
       if (
@@ -174,7 +175,8 @@ export class Widget {
     }
 
     const opts = getEnv(this._sdk.opts, 'widget')
-    const url = opts.origin + src.toWidget()
+    const path = src.toWidget()
+    const url = `${ opts.origin }/widget/v1${ path }`
 
     return new Promise((resolve, reject) => {
       window.document.body.append(this.$overlay)

@@ -9,6 +9,7 @@ esbuild.build({
   platform: 'browser',
   target: 'es6',
   minify: true,
+  keepNames: true,
   sourcemap: true,
   plugins: [
     GlobalsPlugin({
