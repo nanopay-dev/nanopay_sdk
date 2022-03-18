@@ -136,7 +136,8 @@ export class Widget {
 
     this.$iframe.width = '100%'
     this.$iframe.height = '100%'
-    this.$iframe.setAttribute('allow', `clipboard-write self ${opts.origin}`)
+    this.$iframe.setAttribute('allow', `clipboard-write 'self' ${opts.origin}`)
+    this.$iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin')
 
     Object.assign(this.$overlay.style, overlayStyles)
     Object.assign(this.$widget.style, widgetStyles)
